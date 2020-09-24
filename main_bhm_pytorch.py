@@ -1,4 +1,4 @@
-# Bayesian Hilberct Maps for Patrick Babb
+# Bayesian Hilbert Maps for Patrick Babb
 
 import sys
 import os
@@ -7,39 +7,24 @@ import numpy as np
 import pandas as pd
 import torch as pt
 import matplotlib.pyplot as pl
+import yaml
 from bhmtorch_cpu import BHM2D_PYTORCH
-
-def load_parameters(case):
-    parameters = \
-        {
-         'surf_patrick': \
-             (os.getcwd() + '/datasets/surf_patrick_toy_intersection', # data file
-              os.getcwd() + '/output/surf_patrick_toy_intersection/', #output images
-              (1, 1),  # hinge point resolution
-              5,  # gamma - a hyperparameter
-              0.9,  # query_resolution --> units: meters, every 0.5,....meters (smaller is better resolution
-              ),
-         'real_lidar_cut':  
-             (os.getcwd() + '/datasets/real_lidar_cut', # data file
-              os.getcwd() + '/output/real_lidar/', #output images
-              (1000, 1000),  # hinge point resolution
-              5,  # gamma - a hyperparameter
-              0.9,  # query_resolution --> units: meters, every 0.5,....meters (smaller is better resolution
-              ),
-         }
-    return parameters[case]
 
 # Settings
 dtype = pt.float32
 device = pt.device("cpu")
 #device = pt.device("cuda:0") # Uncomment this to run on GPU
 
-def train():
+def train(dataset_name):
     # Read parameters
-    fn_train, fn_out, cell_resolution, gamma, q_resolution = load_parameters('real_lidar_cut') #call name depending on want
-
+    with open('config/'+dataset_name+'.yaml') as file:
+        yaml_data = yaml.load(file, Loader=yaml.FullLoader)
+        fn_train, fn_out, hinge_resolution, gamma, q_resolution, t_steps = yaml_data['fn_train'], yaml_data['fn_out'], yaml_data['hinge_resolution'], yaml_data['gamma'], yaml_data['q_resolution'], yaml_data['t_steps']
+        fn_train = os.getcwd() + fn_train
+        fn_out = os.getcwd() + fn_out
+        
     # Read data
-    for framei in range(10):
+    for framei in range(t_steps):
         # Load data
         print('\nReading ' + fn_train + '.csv...'.format(framei))
         df = pd.read_csv(fn_train + '.csv'.format(framei), delimiter=',').values[:, :]
@@ -58,7 +43,7 @@ def train():
         print(' Data shape={}'.format(X.shape))
 
         # Define the model
-        bhm_mdl = BHM2D_PYTORCH(gamma=gamma, grid=None, cell_resolution=cell_resolution, cell_max_min=area_max_min, X=X, nIter=1)
+        bhm_mdl = BHM2D_PYTORCH(gamma=gamma, grid=None, cell_resolution=hinge_resolution, cell_max_min=area_max_min, X=X, nIter=1)
 
         # Fit the model
         t1 = time.time()
@@ -90,4 +75,5 @@ def train():
     sys.exit()
 
 if __name__ == '__main__':
-    train()
+    dataset_name = 'real_lidar_cut'
+    train(dataset_name)

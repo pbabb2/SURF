@@ -4,7 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as pl
 
-def get_filled_txy(X, y, car_pos=np.array([0,0]), max_range=20, unoccupied_points_per_meter=0.5, margin=0.05):
+def get_filled_txy(X, y, car_pos=np.array([0,0]), max_range=20, unoccupied_points_per_meter=5, margin=0.05):
     """
     Add free points along lidar beams
     """
@@ -36,7 +36,7 @@ def get_filled_txy(X, y, car_pos=np.array([0,0]), max_range=20, unoccupied_point
 
 def main(filename, num_of_scans_to_stack):
     # Read data from rplidar file
-    rp_lidar_data = np.load(filename + '.npy', allow_pickle=True)
+    rp_lidar_data = np.load('datasets/' + filename + '.npy', allow_pickle=True)
 
     # Virtically stack all data
     rp = rp_lidar_data[0]
@@ -45,7 +45,7 @@ def main(filename, num_of_scans_to_stack):
         rp = np.vstack((rp, rp_lidar_data[i]))
 
     # Scale: mm->m
-    rp[:,2] /= 100
+    rp[:,2] /= 1000
     th = rp[:,1]
 
     # Detect change point
@@ -78,14 +78,14 @@ def main(filename, num_of_scans_to_stack):
         pl.subplot(122)
         pl.scatter(data[:,1], data[:,2], c=data[:,3], s=10, cmap='jet')
         #pl.show()
-        pl.savefig('datasets/figs/'+ filename+'bhm_ready_{}.png'.format(i))
+        pl.savefig('datasets/figs/'+ filename+'_bhm_ready_{}.png'.format(i))
 
         if i == 0:
             data_all = data
         else:
             data_all = np.vstack((data_all, data))
 
-        np.savetxt('datasets/' + filename+'_bhm_ready.csv', data, delimiter=',')
+        np.savetxt('datasets/' + filename+'_bhm_ready.csv', data_all, delimiter=',')
         print('\n')
 
 if __name__ == '__main__':

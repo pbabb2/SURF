@@ -1,0 +1,9 @@
+fn_train: '/datasets/examples_bhm_ready' #input csv data file
+fn_out: '/output/real_lidar/' #output save file
+hinge_resolution: [0.1, 0.1] # [x_spacing, y_spacing]
+gamma: 100 # kernel parameter
+q_resolution: 0.1 #spacing between query points
+t_steps: 10 #number of time steps to plot
+
+
+
