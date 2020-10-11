@@ -1,0 +1,9 @@
+fn_train: '/datasets/surf_patrick_toy_intersection' #input csv data file
+fn_out: '/output/surf_patrick_toy_intersection/' #output save file
+hinge_resolution: (1, 1) # [x_spacing, y_spacing]
+gamma: 5 # kernel parameter
+q_resolution: 0.9 #spacing between query points
+t_steps: 10 #number of time steps to plot
+
+
+
