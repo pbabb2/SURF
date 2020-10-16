@@ -14,6 +14,18 @@ import torch as pt
 import yaml
 from bhmtorch_cpu import BHM2D_PYTORCH
 
+
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.animation as animation
+
+import time
+
+DMAX = 4000
+IMIN = 0
+IMAX = 50
+
+
 def get_filled_txy(X, y, car_pos=np.array([0,0]), max_range=20, unoccupied_points_per_meter=5, margin=0.05):
     """
     Add free points along lidar beams
@@ -87,7 +99,7 @@ def main(filename, num_of_scans_to_stack):
         pl.polar(np.deg2rad(scani[:,1]), scani[:,2], c='r')
         pl.subplot(122)
         pl.scatter(data[:,1], data[:,2], c=data[:,3], s=10, cmap='jet')
-        pl.show()
+        #pl.show()
         pl.savefig('datasets/figs/'+ filename+'_bhm_ready_{}.png'.format(i))
         
         
@@ -120,7 +132,7 @@ def train(dataset_name):
         fn_out = os.getcwd() + fn_out
         
     # Read data
-    for framei in range(t_steps):
+    for framei in range(t_steps-1):
         # Load data
         print('\nReading ' + fn_train + '.csv...'.format(framei))
         df = pd.read_csv(fn_train + '.csv'.format(framei), delimiter=',').values[:, :]
@@ -172,7 +184,37 @@ def train(dataset_name):
         pl.savefig(fn_out+'_frame{}.png'.format(framei))
         #sys.exit()
         print(' Plotted.')
-    sys.exit()
+    #sys.exit()
+    
+def update_map(num, iterator):
+    scan = next(iterator)
+    #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
+    #map_.set_offsets(offsets)
+    intens = np.array([meas[0] for meas in scan])
+    map_.set_array(intens)
+    #time.sleep(1)
+    return map_,
+
+def run():
+    #lidar = RPLidar(PORT_NAME)
+    fig = plt.figure()
+    #ax = plt.subplot(111, projection='polar')
+
+    #map_=    
+    #ax.set_rmax(DMAX)
+    #ax.grid(True)
+
+    #iterator = lidar.iter_scans() #need to iterate over bhms
+    path = '/home/pi/Desktop/SURF/output/real_lidar'
+    bhmscans = os.listdir(path)
+
+    iterator = iter(bhmscans) #use iter() to get iterator
+    
+    ani = animation.FuncAnimation(fig, update_map,
+        fargs=(iterator), interval=50)
+    plt.show()
+    #lidar.stop()
+    #lidar.disconnect()
 
 if __name__ == '__main__':
     filename = 'examples'
@@ -181,3 +223,4 @@ if __name__ == '__main__':
     
     dataset_name = 'real_lidar_cut'
     train(dataset_name)
+    run()
