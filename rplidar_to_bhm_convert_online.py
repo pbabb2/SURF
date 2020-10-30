@@ -187,48 +187,50 @@ def train(dataset_name):
         ax = fig.add_axes([0.1,0.1,0.4,0.8])
         plot = ax.scatter         #sys.exit()
         print(' Plotted.')
-        np.save(fn_out+'_frame{}.png'.format(framei),arr,allow_pickle=True, fix_imports=True)
+        np.save(fn_out+'_frame{}.png'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True)
       
     #sys.exit()
     
 def update_map():
    
-  
-    path = '/home/pi/Desktop/SURF/output/real_lidar'
-    bhmscans = os.listdir(path)
-    iterator = iter(bhmscans)
-    
-    #scan = next(iterator)
-    map_=next(iterator)
-    #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
-    #map_.set_offsets(offsets)
-    intens = np.array([meas[0] for meas in map_])
+
     map_.set_array(intens)
     #time.sleep(1)
     return map_,
 
+def update_line(num, iterator, line):
+    fn = next(iterator)
+    print('output/real_lidar/' + fn)
+    data = np.load('output/real_lidar/' + fn, allow_pickle=True)
+    print(data)
+    offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
+    line.set_offsets(offsets)
+    intens = np.array([meas[0] for meas in scan])
+    line.set_array(intens)
+    return line,
+
 def run():
     #make animation
     #lidar = RPLidar(PORT_NAME)
-    #fig1 = pl.figure()
-    #ax = plt.subplot(111, projection='polar')
-    #ax = fig1.add_subplot(1,1,1#ax.plot([1,2])
+    fig = plt.figure()
+    ax = plt.subplot(111, projection='polar')
+    line = ax.scatter([0, 0], [0, 0], s=5, c=[IMIN, IMAX],
+                           cmap=plt.cm.Greys_r, lw=0)
+    ax.set_rmax(DMAX)
+    ax.grid(True)
 
-    #map_=    
-    #ax.set_rmax(DMAX)
-    #ax.grid(True)
-
-    #iterator = lidar.iter_scans() #need to iterate over bhms
-    path = '/home/pi/Desktop/SURF/output/real_lidar'
+    path = 'output/real_lidar'
     bhmscans = os.listdir(path)
+    #print(bhmscans)
+    iterator = iter(bhmscans)
 
-    iterator = iter(bhmscans) #use iter() to get iterator
-   
-    #map_=next(iterator)
-    
-    ani = animation.FuncAnimation(map_, update_map,
-        fargs=(iterator), interval=50)
-    #pl.show()
+    ani = animation.FuncAnimation(fig, update_line,
+        fargs=(iterator, line), interval=50)
+
+    # ani = animation.FuncAnimation(map_, update_map,
+    #                               fargs=(iterator), interval=50)
+
+    pl.show()
     #lidar.stop()
     #lidar.disconnect()
 
@@ -242,6 +244,6 @@ if __name__ == '__main__':
     
     dataset_name = 'real_lidar_cut'
     #train(dataset_name)
-    update_map()
+    #update_map()
     run()
     
