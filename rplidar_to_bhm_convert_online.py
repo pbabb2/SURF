@@ -20,6 +20,7 @@ import numpy as np
 import matplotlib.animation as animation
 
 import time
+from array import array as arr
 
 DMAX = 4000
 IMIN = 0
@@ -181,24 +182,37 @@ def train(dataset_name):
         pl.scatter(Xq[:, 0], Xq[:, 1], c=yq, cmap='jet', s=20, vmin=0, vmax=1, edgecolors='')
         pl.colorbar()
         pl.title('frame{}'.format(framei))
-        pl.savefig(fn_out+'_frame{}.png'.format(framei))
-        #sys.exit()
+        #pl.savefig(fn_out+'_frame{}.png'.format(framei))
+        fig = pl.figure()
+        ax = fig.add_axes([0.1,0.1,0.4,0.8])
+        plot = ax.scatter         #sys.exit()
         print(' Plotted.')
+        np.save(fn_out+'_frame{}.png'.format(framei),arr,allow_pickle=True, fix_imports=True)
+      
     #sys.exit()
     
-def update_map(num, iterator):
-    scan = next(iterator)
+def update_map():
+   
+  
+    path = '/home/pi/Desktop/SURF/output/real_lidar'
+    bhmscans = os.listdir(path)
+    iterator = iter(bhmscans)
+    
+    #scan = next(iterator)
+    map_=next(iterator)
     #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
     #map_.set_offsets(offsets)
-    intens = np.array([meas[0] for meas in scan])
+    intens = np.array([meas[0] for meas in map_])
     map_.set_array(intens)
     #time.sleep(1)
     return map_,
 
 def run():
+    #make animation
     #lidar = RPLidar(PORT_NAME)
-    fig = plt.figure()
+    #fig1 = pl.figure()
     #ax = plt.subplot(111, projection='polar')
+    #ax = fig1.add_subplot(1,1,1#ax.plot([1,2])
 
     #map_=    
     #ax.set_rmax(DMAX)
@@ -209,18 +223,25 @@ def run():
     bhmscans = os.listdir(path)
 
     iterator = iter(bhmscans) #use iter() to get iterator
+   
+    #map_=next(iterator)
     
-    ani = animation.FuncAnimation(fig, update_map,
+    ani = animation.FuncAnimation(map_, update_map,
         fargs=(iterator), interval=50)
-    plt.show()
+    #pl.show()
     #lidar.stop()
     #lidar.disconnect()
 
 if __name__ == '__main__':
+    
+    def __init__(self, canvas):
+        self.canvas = canvas
     filename = 'examples'
     num_of_scans_to_stack = 10
-    main(filename, num_of_scans_to_stack)
+    #main(filename, num_of_scans_to_stack)
     
     dataset_name = 'real_lidar_cut'
-    train(dataset_name)
+    #train(dataset_name)
+    update_map()
     run()
+    
