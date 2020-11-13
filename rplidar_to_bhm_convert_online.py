@@ -187,45 +187,46 @@ def train(dataset_name):
         ax = fig.add_axes([0.1,0.1,0.4,0.8])
         plot = ax.scatter         #sys.exit()
         print(' Plotted.')
-        np.save(fn_out+'_frame{}.png'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True)
+        np.save(fn_out+'_frame{}'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True) #save files as numpy array
       
     #sys.exit()
     
-def update_map():
+#def update_map():
    
 
-    map_.set_array(intens)
+    #map_.set_array(intens)
     #time.sleep(1)
-    return map_,
+    #return map_,
 
 def update_line(num, iterator, line):
     fn = next(iterator)
     print('output/real_lidar/' + fn)
-    data = np.load('output/real_lidar/' + fn, allow_pickle=True)
+    data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file
     print(data)
-    offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
-    line.set_offsets(offsets)
-    intens = np.array([meas[0] for meas in scan])
-    line.set_array(intens)
+    #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan]) #scan
+    #line.set_offsets(offsets)
+    #intens = np.array([meas[0] for meas in scan]) #data points in numpy array
+    line.set_array(data[:,:2]) #inputs data into scatter plot
+    
     return line,
 
 def run():
     #make animation
     #lidar = RPLidar(PORT_NAME)
     fig = plt.figure()
-    ax = plt.subplot(111, projection='polar')
-    line = ax.scatter([0, 0], [0, 0], s=5, c=[IMIN, IMAX],
+    ax = plt.subplot(111)
+    line = ax.scatter([0, 0], [0, 0], s=5, 
                            cmap=plt.cm.Greys_r, lw=0)
-    ax.set_rmax(DMAX)
+    #ax.set_rmax(DMAX)
     ax.grid(True)
 
     path = 'output/real_lidar'
-    bhmscans = os.listdir(path)
+    bhmscans = os.listdir(path) #read names of numpy arrays (list of all file names in path)
     #print(bhmscans)
     iterator = iter(bhmscans)
 
     ani = animation.FuncAnimation(fig, update_line,
-        fargs=(iterator, line), interval=50)
+        fargs=(iterator, line), interval=1000)
 
     # ani = animation.FuncAnimation(map_, update_map,
     #                               fargs=(iterator), interval=50)
@@ -244,6 +245,6 @@ if __name__ == '__main__':
     
     dataset_name = 'real_lidar_cut'
     #train(dataset_name)
-    #update_map()
+    #update_line()
     run()
     
