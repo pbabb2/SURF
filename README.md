@@ -8,17 +8,14 @@ To run BHM, run  ```main_bhm_pytorch.py ```. Parameters of BHM can be set in the
 
 
 
-#necessary libraries
-
+## Requirements
+- Ruby version 2.6.0 (check your Ruby version using ruby -v)
+-add libraries
 #install using pip3
 
 $ pip install rplidar
 
 $ sudo pip3 install rplidar
-
-
-## Requirements
-- Ruby version 2.6.0 (check your Ruby version using ruby -v)
 
 ## Installation 
 
