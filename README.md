@@ -9,23 +9,18 @@ To run BHM, run  ```main_bhm_pytorch.py ```. Parameters of BHM can be set in the
 
 
 ## Requirements
-- Ruby version 2.6.0 (check your Ruby version using ruby -v)
--add libraries
-#install using pip3
-
-$ pip install rplidar
-
-$ sudo pip3 install rplidar
+- TensorFlow
+- PyTorch
+- matplotlib
 
 ## Installation 
 
-Need to place these [steps from here](https://jekyllrb.com/docs/installation/) here.
+- link websites for installation
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `gem install jekyll bundler`
+### `installer`
 
-Installs all the Jekyll specific gems (software libraries)<br />
-See the [setup section](https://jekyllrb.com/docs/step-by-step/01-setup/) in official Jekyll Docs for more setup information.
+
