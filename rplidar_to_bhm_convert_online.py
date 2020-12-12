@@ -207,35 +207,58 @@ def update_line(num, iterator, line):
     #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan]) #scan
     #line.set_offsets(offsets)
     #intens = np.array([meas[0] for meas in scan]) #data points in numpy array
-    line.set_array(data[:,:2]) #inputs data into scatter plot
-    
+    #line.set_array(data[:,:2]) #inputs data into scatter plot
+    #line.set_array(data[0,0]) #inputs data into scatter plot
+    #line.set_data(data[1,0], data[1,1]) #inputs data into scatter plot
+    line.set_offsets(data[:1,:2]) #inputs data into scatter plot
+    #print('x is',data[1,0])
+    #print('y is',data[1,1])
+    print(data[:1,:2])
     return line,
+    
 
 def run():
     #make animation
     #lidar = RPLidar(PORT_NAME)
     fig = plt.figure()
-    ax = plt.subplot(111)
-    line = ax.scatter([0, 0], [0, 0], s=5, 
-                           cmap=plt.cm.Greys_r, lw=0)
+    #ax = plt.subplot(111)
+    ax = plt.axes(xlim=(-5,5), ylim=(-5,5))
+    #line = ax.scatter([0, 0], [0, 0], s=5, 
+                           #cmap=plt.cm.Greys_r, lw=0)
+    line = ax.scatter([0, 0], [0, 0], s=50, c=[IMIN, IMAX],
+                         cmap=plt.cm.Greys_r, lw=0)
+    
+    #line = ax.scatter([0],[0],s=5)
+    #line, = ax.plot([],[],'ro')
+    #line, = ax.plot([], [], lw = 10)
+    #line, = ax.plot([], lw = 3)
+    #line = plt.scatter([],[])
+                           
+    
     #ax.set_rmax(DMAX)
     
-    #ax = (xlim=(-10,10), ylim=(-10,10))
+    
     #line = ax.scatter(Xq[:, 0], Xq[:, 1])
     
-    ax.grid(True)
+    #ax.grid(True)
 
     path = 'output/real_lidar'
     bhmscans = os.listdir(path) #read names of numpy arrays (list of all file names in path)
     #print(bhmscans)
     iterator = iter(bhmscans)
 
-    ani = animation.FuncAnimation(fig, update_line,
-        fargs=(iterator, line), interval=1000)
+    ani = FuncAnimation(fig, update_line,
+        fargs=(iterator, line), interval=250)
 
     # ani = animation.FuncAnimation(map_, update_map,
     #                               fargs=(iterator), interval=50)
-    #ani.save('animation.mp4')
+    
+    # Set up formatting for the movie files
+    #Writer = animation.writers['ffmpeg']
+    #writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+
+
+    #ani.save('animation.mp4',writer=writer)
 
     plt.show()
     #lidar.stop()
