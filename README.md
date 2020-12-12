@@ -8,10 +8,19 @@ To run BHM, run  ```main_bhm_pytorch.py ```. Parameters of BHM can be set in the
 
 
 
-#necessary libraries
+## Requirements
+- TensorFlow
+- PyTorch
+- matplotlib
 
-#install using pip3
+## Installation 
 
-$ pip install rplidar
+- link websites for installation
 
-$ sudo pip3 install rplidar
+## Available Scripts
+
+In the project directory, you can run:
+
+### `installer`
+
+
