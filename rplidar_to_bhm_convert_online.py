@@ -1,8 +1,8 @@
 # RPlidar to Bayesian Hilber Maps preprocessing
 # This assumes a stationary or slowly moving lidar
-
+#import tkinter
 import numpy as np
-import matplotlib.pyplot as pl
+#import matplotlib.pyplot as pl
 
 import sys
 import os
@@ -18,6 +18,7 @@ from bhmtorch_cpu import BHM2D_PYTORCH
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
+from matplotlib.animation import FuncAnimation
 
 import time
 from array import array as arr
@@ -148,7 +149,7 @@ def train(dataset_name):
         # Prepare data
         df = pt.tensor(df, dtype=pt.float32)
         X = df[:, :2]
-        y = df[:, 2].reshape(-1, 1)
+        y = df[:, :2].reshape(-1, 1)
         print(' Data shape={}'.format(X.shape))
 
         # Define the model
@@ -177,13 +178,13 @@ def train(dataset_name):
         #run chart
         
         # Plot frame i
-        pl.close('all')
-        pl.figure(figsize=(3,3))
-        pl.scatter(Xq[:, 0], Xq[:, 1], c=yq, cmap='jet', s=20, vmin=0, vmax=1, edgecolors='')
-        pl.colorbar()
-        pl.title('frame{}'.format(framei))
-        #pl.savefig(fn_out+'_frame{}.png'.format(framei))
-        fig = pl.figure()
+        plt.close('all')
+        plt.figure(figsize=(3,3))
+        plt.scatter(Xq[:, 0], Xq[:, 1], c=yq, cmap='jet', s=20, vmin=0, vmax=1, edgecolors='')
+        plt.colorbar()
+        plt.title('frame{}'.format(framei))
+        #plt.savefig(fn_out+'_frame{}.png'.format(framei))
+        fig = plt.figure()
         ax = fig.add_axes([0.1,0.1,0.4,0.8])
         plot = ax.scatter         #sys.exit()
         print(' Plotted.')
@@ -202,7 +203,7 @@ def update_line(num, iterator, line):
     fn = next(iterator)
     print('output/real_lidar/' + fn)
     data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file
-    print(data)
+    #print(data)
     #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan]) #scan
     #line.set_offsets(offsets)
     #intens = np.array([meas[0] for meas in scan]) #data points in numpy array
@@ -218,6 +219,10 @@ def run():
     line = ax.scatter([0, 0], [0, 0], s=5, 
                            cmap=plt.cm.Greys_r, lw=0)
     #ax.set_rmax(DMAX)
+    
+    #ax = (xlim=(-10,10), ylim=(-10,10))
+    #line = ax.scatter(Xq[:, 0], Xq[:, 1])
+    
     ax.grid(True)
 
     path = 'output/real_lidar'
@@ -230,8 +235,9 @@ def run():
 
     # ani = animation.FuncAnimation(map_, update_map,
     #                               fargs=(iterator), interval=50)
+    #ani.save('animation.mp4')
 
-    pl.show()
+    plt.show()
     #lidar.stop()
     #lidar.disconnect()
 
