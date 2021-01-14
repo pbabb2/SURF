@@ -22,6 +22,7 @@ from matplotlib.animation import FuncAnimation
 
 import time
 from array import array as arr
+import matplotlib.cm as cm
 
 DMAX = 4000
 IMIN = 0
@@ -203,17 +204,8 @@ def update_line(num, iterator, line):
     fn = next(iterator)
     print('output/real_lidar/' + fn)
     data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file
-    #print(data)
-    #offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan]) #scan
-    #line.set_offsets(offsets)
-    #intens = np.array([meas[0] for meas in scan]) #data points in numpy array
-    #line.set_array(data[:,:2]) #inputs data into scatter plot
-    #line.set_array(data[0,0]) #inputs data into scatter plot
-    #line.set_data(data[1,0], data[1,1]) #inputs data into scatter plot
-    line.set_offsets(data[:1,:2]) #inputs data into scatter plot
-    #print('x is',data[1,0])
-    #print('y is',data[1,1])
-    print(data[:1,:2])
+    line.set_offsets(data[:, :2])
+    line.set_color(cm.jet(data[:, 2]))
     return line,
     
 
