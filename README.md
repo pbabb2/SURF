@@ -22,6 +22,8 @@ To convert BHM compatible csv to an updatable Bayesian Hilbert Map, run
 ## Installation 
 
 - link websites for installation
+- TensorFlow: `https://qengineering.eu/install-tensorflow-1.15.2-on-raspberry-pi-4.html`
+- PyTorch: `https://gist.github.com/akaanirban/621e63237e63bb169126b537d7a1d979`
 
 ## Available Scripts
 
