@@ -7,8 +7,8 @@ To convert rplidar raw data (offline) to BHM compatible csv, run  ```rplidar_to_
 To run BHM, run  ```main_bhm_pytorch.py ```. Parameters of BHM can be set in the ```yaml``` files in the config folder.
 To convert BHM compatible csv to an updatable Bayesian Hilbert Map, run 
 ```rplidar_to_bhm_convert_online.py```
-TODO
-- Create Bayesian Hilbert Maps from raw data directly
+
+- TODO: Create Bayesian Hilbert Maps from raw data directly
 
 
 
