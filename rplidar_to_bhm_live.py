@@ -191,15 +191,17 @@ def train(dataset_name):
         ax = fig.add_axes([0.1,0.1,0.4,0.8])
         plot = ax.scatter         #sys.exit()
         print(' Plotted.')
-        np.save(fn_out+'_frame{}'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True) #save files as numpy array
+        np.save(fn_out+'_frame{}'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True) #return data, don't save
       
 
 
-def update_line(num, iterator, line):
+def update_line(num, iterator, line): #train here, call main()
     fn = next(iterator)
     print('output/real_lidar/' + fn)
-    data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file
+    data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file, replace with main()
     #print(data)
+    
+    #call train(data)
   
     line.set_offsets(data[:, :2])
     line.set_color(cm.jet(data[:, 2]))
@@ -207,7 +209,7 @@ def update_line(num, iterator, line):
     return line,
     
 
-def run():
+def run(): #run 1st
     #make animation
     
     fig = plt.figure()
@@ -225,7 +227,7 @@ def run():
 
     ani = FuncAnimation(fig, update_line,
         fargs=(iterator, line), interval=100)
-
+bb
 
     plt.show()
  
