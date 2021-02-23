@@ -13,7 +13,7 @@ To convert BHM compatible csv to an updatable Bayesian Hilbert Map, run
 
 
 ## Requirements
-- TensorFlow
+- TensorFlow Lite
 - PyTorch
 - Matplotlib
 - Pandas
