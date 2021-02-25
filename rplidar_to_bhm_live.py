@@ -2,6 +2,10 @@
 # This assumes a stationary or slowly moving lidar
 #import tkinter
 #remember to activate virtual environment at root: "source .venv/bin/activate"
+
+#from rplidar import RPLidar
+#PORT_NAME = '/dev/ttyUSB0'
+
 import numpy as np
 import matplotlib.pyplot as pl
 
@@ -81,7 +85,7 @@ def main(filename, num_of_scans_to_stack):
     change_point = diff > 350 #change point if diff greater than 350
     change_point_loc = np.where(change_point == True)[0]
     change_point_loc = np.insert(change_point_loc, 0, [0,])
-    print("change_point_loc: ", change_point_loc)
+    #print("change_point_loc: ", change_point_loc)
 
     # for each lidar circle
     for i in range(len(change_point_loc)-1):
@@ -95,9 +99,10 @@ def main(filename, num_of_scans_to_stack):
         y = np.ones(X.shape[0]) # N numpy array (1 indicate when the lidar hits and 0 indicate when the lidar does not reflect back)
         data = get_filled_txy(X, y)
         data = np.hstack((i+np.zeros(data.shape[0])[:,None], data))
-        print('scan {}: {} after in-filling'.format(i, data.shape))
+        #print('scan {}: {} after in-filling'.format(i, data.shape))
 
         # plot
+        '''
         fig = pl.figure(figsize=(10,4))
         pl.suptitle('scan {}'.format(i))
         ax = fig.add_subplot(121, projection='polar')
@@ -107,7 +112,7 @@ def main(filename, num_of_scans_to_stack):
         #pl.show()
         #pl.savefig('datasets/figs/'+ filename+'_bhm_ready_{}.png'.format(i))
         
-        
+        '''
         #update chart
         
         #run chart
@@ -120,6 +125,7 @@ def main(filename, num_of_scans_to_stack):
         np.savetxt('datasets/' + filename+'_bhm_ready.csv', data_all, delimiter=',')
         print('\n')
         
+        return data_all
         ###################################################################################
         #BHMs
         
@@ -130,7 +136,9 @@ device = pt.device("cpu")
 
 def train(dataset_name):
     # Read parameters
-    with open('config/'+dataset_name+'.yaml') as file:
+    
+    
+    with open('config/real_lidar_cut.yaml') as file:
         yaml_data = yaml.load(file, Loader=yaml.FullLoader)
         fn_train, fn_out, hinge_resolution, gamma, q_resolution, t_steps = yaml_data['fn_train'], yaml_data['fn_out'], yaml_data['hinge_resolution'], yaml_data['gamma'], yaml_data['q_resolution'], yaml_data['t_steps']
         fn_train = os.getcwd() + fn_train
@@ -140,8 +148,10 @@ def train(dataset_name):
     for framei in range(t_steps-1):
         # Load data
         print('\nReading ' + fn_train + '.csv...'.format(framei))
-        df = pd.read_csv(fn_train + '.csv'.format(framei), delimiter=',').values[:, :]
+        #df = pd.read_csv(fn_train + '.csv'.format(framei), delimiter=',').values[:, :]
+        df = dataset_name
         df = df[df[:,0] == framei, 1:]
+        print(df,'df is printing')
 
         # Determine the lidar area
         delta = 1
@@ -152,7 +162,7 @@ def train(dataset_name):
         # Prepare data
         df = pt.tensor(df, dtype=pt.float32)
         X = df[:, :2]
-        y = df[:, :2].reshape(-1, 1)
+        y = df[:, 2].reshape(-1, 1)
         print(' Data shape={}'.format(X.shape))
 
         # Define the model
@@ -175,12 +185,14 @@ def train(dataset_name):
         t2 = time.time()
         queryTime = np.round(t2-t1, 3)
         print(' Query time={} s'.format(queryTime))
-        
+        print("yq is",yq)
+        print("Xq is",Xq)
         #update chart
         
         #run chart
         
         # Plot frame i
+        
         plt.close('all')
         plt.figure(figsize=(3,3))
         plt.scatter(Xq[:, 0], Xq[:, 1], c=yq, cmap='jet', s=20, vmin=0, vmax=1, edgecolors='')
@@ -190,29 +202,58 @@ def train(dataset_name):
         fig = plt.figure()
         ax = fig.add_axes([0.1,0.1,0.4,0.8])
         plot = ax.scatter         #sys.exit()
-        print(' Plotted.')
-        np.save(fn_out+'_frame{}'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True) #return data, don't save
-      
+        #print(' Plotted.')
+        #np.save(fn_out+'_frame{}'.format(framei), np.hstack((Xq,yq[:,None])),allow_pickle=True, fix_imports=True) #return data, don't save
+        #break
+        #data = np
+        #return data #return yq,xq, plot yq and xq
+        #print(data)
+        return yq,Xq
+        #return data,
 
 
-def update_line(num, iterator, line): #train here, call main()
-    fn = next(iterator)
-    print('output/real_lidar/' + fn)
-    data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file, replace with main()
+def update_line(num, iterator,line): #train here, call main()
+    #bhmscan = next(iterator)
+    #print('output/real_lidar/' + fn)
+    #data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file, replace with main()
     #print(data)
     
-    #call train(data)
+    filename = 'examples'
+    num_of_scans_to_stack = 10
+    
+    data_all=main(filename, num_of_scans_to_stack) #output of main saved to data_all
+    
+    print('are you working?',data_all)
+    
+    
+    data=train(data_all) #returns data (bhms)
   
     line.set_offsets(data[:, :2])
     line.set_color(cm.jet(data[:, 2]))
-    print(data[:,:3])
+    #print(data[:,:3])
+    #return line, # what does comma do?
+    #return data,
+#def init():
+    #ax = plt.axes(xlim=(-5,5), ylim=(-5,5))
+    #line = ax.scatter([0, 0], [0, 0], s=50, c=[IMIN, IMAX],
+                         #cmap=plt.cm.Greys_r, lw=0)
     return line,
+    #return data,
+    #return data_all,
+    print('are you here?')
     
+#def lidar_sim()
+    #simulate outputting numpy files live
 
-def run(): #run 1st
+def run(filename, num_of_scans_to_stack): #run 1st
     #make animation
     
+    #plot Xq, yq
+    #make an iterator from the outputted bhms in train
+
+    
     fig = plt.figure()
+    #line=init()
    
     ax = plt.axes(xlim=(-5,5), ylim=(-5,5))
   
@@ -220,14 +261,30 @@ def run(): #run 1st
                          cmap=plt.cm.Greys_r, lw=0)
 
 
-    path = 'output/real_lidar'
-    bhmscans = os.listdir(path) #read names of numpy arrays (list of all file names in path)
+    #path = 'output/real_lidar'
+    #bhmscans = os.listdir(path) #read names of numpy arrays (list of all file names in path)
     #print(bhmscans)
-    iterator = iter(bhmscans)
+    #iterator = iter(bhmscans)
+    
+    #bhmscans = train(dataset_name)
+    #iterator = iter(bhmscans)
 
+    #ani = FuncAnimation(fig, update_line, init_func=init,
+    #   interval=100) #how to put data through here?
+    
+    
+    #data_all=main(filename, num_of_scans_to_stack) #output of main saved to data_all
+    #data=train(data_all) #returns data
+    #iterator=iter(data)
+    
+    
     ani = FuncAnimation(fig, update_line,
-        fargs=(iterator, line), interval=100)
-bb
+        fargs=(iterator, line), interval=1000)
+
+
+
+
+
 
     plt.show()
  
@@ -238,9 +295,14 @@ if __name__ == '__main__':
         self.canvas = canvas
     filename = 'examples'
     num_of_scans_to_stack = 10
-    main(filename, num_of_scans_to_stack)
     
     dataset_name = 'real_lidar_cut'
-    train(dataset_name)
-    run()
+    
+    run(filename, num_of_scans_to_stack)
+    
+    #main(filename, num_of_scans_to_stack)
+    
+    
+    #train(dataset_name)
+    
     
