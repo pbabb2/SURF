@@ -217,6 +217,9 @@ def update_line(num, iterator,line): #train here, call main()
     #print('output/real_lidar/' + fn)
     #data = np.load('output/real_lidar/' + fn, allow_pickle=True) #load file, replace with main()
     #print(data)
+    print(iterator)
+    #iterating through change points in main (use all except for loop)
+    #read 
     
     filename = 'examples'
     num_of_scans_to_stack = 10
@@ -277,6 +280,10 @@ def run(filename, num_of_scans_to_stack): #run 1st
     #data=train(data_all) #returns data
     #iterator=iter(data)
     
+    files = [0,1,2,3,4,5,6,7,8,9,10]
+    it = iter(files)
+    iterator = next(it)
+
     
     ani = FuncAnimation(fig, update_line,
         fargs=(iterator, line), interval=1000)
