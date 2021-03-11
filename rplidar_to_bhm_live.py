@@ -3,7 +3,8 @@
 #import tkinter
 #remember to activate virtual environment at root: "source .venv/bin/activate"
 
-#from rplidar import RPLidar
+from record_scans import *
+from rplidar import RPLidar
 #PORT_NAME = '/dev/ttyUSB0'
 
 import numpy as np
@@ -68,7 +69,16 @@ def get_filled_txy(X, y, car_pos=np.array([0,0]), max_range=20, unoccupied_point
 def main(filename, num_of_scans_to_stack):
     # Read data from rplidar file
     rp_lidar_data = np.load('datasets/' + filename + '.npy', allow_pickle=True)
-
+    
+    #read from lidar
+    #lidar = RPLidar(PORT_NAME)
+    #print('this is lidar[0]', lidar[0]) #TypeError: 'RPLidar' object is not subscriptable
+    #print('this is lidar', lidar.iter_scans())
+    #rp = lidar
+    
+    #run(path)
+    
+    
     # Virtically stack all data
     rp = rp_lidar_data[0]
     num_of_scans_to_stack = min(num_of_scans_to_stack, len(rp))
@@ -208,7 +218,13 @@ def train(dataset_name):
         #data = np
         #return data #return yq,xq, plot yq and xq
         #print(data)
-        return yq,Xq
+        #bhm =[]
+        bhm = np.hstack((Xq,yq[:,None]))
+        print('bhm made')
+        return bhm
+        #return yq,Xq
+        
+        
         #return data,
 
 
@@ -230,7 +246,8 @@ def update_line(num, iterator,line): #train here, call main()
     
     
     data=train(data_all) #returns data (bhms)
-  
+    
+      
     line.set_offsets(data[:, :2])
     line.set_color(cm.jet(data[:, 2]))
     #print(data[:,:3])
@@ -247,6 +264,19 @@ def update_line(num, iterator,line): #train here, call main()
     
 #def lidar_sim()
     #simulate outputting numpy files live
+    
+#def iter_bhms(bhm)
+    #files = [0,1,2,3,4,5,6,7,8,9,10]
+    #it = iter(bhm)
+    #iterator = next(it)
+#def iter_bhm(bhm):
+ #   filename = 'examples'
+  #  num_of_scans_to_stack = 10
+   # data_all=main(filename, num_of_scans_to_stack)
+    #train(data_all)
+    #t = iter(bhm)
+    #iterator = next(it)
+    #return iterator
 
 def run(filename, num_of_scans_to_stack): #run 1st
     #make animation
@@ -254,8 +284,13 @@ def run(filename, num_of_scans_to_stack): #run 1st
     #plot Xq, yq
     #make an iterator from the outputted bhms in train
 
+    data_all=main(filename, num_of_scans_to_stack)
+    train(data_all)
+    bhm = print(train(data_all)) #problem here
+    it = iter(bhm)
+    iterator = next(it)
     
-    fig = plt.figure()
+    #fig = plt.figure()
     #line=init()
    
     ax = plt.axes(xlim=(-5,5), ylim=(-5,5))
@@ -268,7 +303,9 @@ def run(filename, num_of_scans_to_stack): #run 1st
     #bhmscans = os.listdir(path) #read names of numpy arrays (list of all file names in path)
     #print(bhmscans)
     #iterator = iter(bhmscans)
-    
+ 
+
+
     #bhmscans = train(dataset_name)
     #iterator = iter(bhmscans)
 
@@ -280,9 +317,9 @@ def run(filename, num_of_scans_to_stack): #run 1st
     #data=train(data_all) #returns data
     #iterator=iter(data)
     
-    files = [0,1,2,3,4,5,6,7,8,9,10]
-    it = iter(files)
-    iterator = next(it)
+    #files = [0,1,2,3,4,5,6,7,8,9,10]
+    #it = iter(files)
+    #iterator = next(it)
 
     
     ani = FuncAnimation(fig, update_line,
