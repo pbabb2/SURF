@@ -16,22 +16,16 @@ PORT_NAME = '/dev/ttyUSB0'
 def read_lidar(num_of_scans_to_stack, itera=0):
     # Read from lidar
     lidar_data = [] #initialize array for live lidar
-    path = '/home/pi/Desktop/SURF/datasets/lidar_store.npy' #store lidar numpy files here
     itera=0 #set iterator to zero
-    os.remove(path) #delete numpy file
-    os.mknod(path) #create numpy file
     lidar = RPLidar(PORT_NAME) #define variable to collect data from lidar
     rp = lidar
     for i, scan in enumerate(lidar.iter_scans()): #enumerate lidar scans to make them iterable
         print('%d: Got %d measurments' % (i, len(scan)))
         lidar_data.append(np.array(scan))
         if i > 10: #if greater than 10 lidar scans, stop enumerating scans
-            #lidar.stop_motor()
             lidar.stop()
-            lidar.disconnect()
             break
-    np.save(path, np.array(lidar_data)) #save lidar data as a numpy file
-    rp_lidar_data = np.load(path, allow_pickle=True) #load lidar data as a numpy file
+    rp_lidar_data = lidar_data #assign lidar_data to rp_lidar_data
     
     # Read data from rplidar file
     #filename = 'examples'
@@ -53,7 +47,7 @@ def read_lidar(num_of_scans_to_stack, itera=0):
     # Detect change point
     th_r = np.roll(th, 1)  # shift last element to first
     diff = th_r - th
-    change_point = diff > 5  # change point if diff greater than 350
+    change_point = diff > 250  # change point if diff greater than 250
     change_point_loc = np.where(change_point == True)[0]
     change_point_loc = np.insert(change_point_loc, 0, [0, ])
     print("change_point_loc: ", change_point_loc)
@@ -66,6 +60,7 @@ def read_lidar(num_of_scans_to_stack, itera=0):
         # todo: add robot pose to the following coords
         x_coord = scani[:, 2] * np.cos(np.deg2rad(scani[:, 1]))
         y_coord = scani[:, 2] * np.sin(np.deg2rad(scani[:, 1]))
+        y_coord = y_coord*-1 #mirror y coordinates about the x-axis to mirror the figure
         X = np.hstack((x_coord[:, None], y_coord[:, None]))  # Nx2 numpy array of lidar positions
         y = np.ones(X.shape[0])  # N numpy array (1 indicate when the lidar hits and 0 indicate when the lidar does not reflect back)
         data = np.hstack((X,y[:,None]))
@@ -195,7 +190,7 @@ def main():
     # parameters
     num_of_scans_to_stack = 5
     config_name = 'config/real_lidar_cut.yaml'
-    n_time_steps = 20
+    n_time_steps = 2000
     delay_between_frames_ms = 500
     plot_minmax = (-2,2)
 
