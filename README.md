@@ -1,4 +1,7 @@
 # Bayesian Hilbert Maps on TPU
+
+* Setup
+![Alt text](./SURF_setup.jpg)
 * We use RPLidar
 <!---
 #![Alt text](./output/surf_patrick_toy_intersection/_frame0.png?raw=true "Regression Sample")
@@ -26,10 +29,10 @@ To create Bayesian Hilbert Maps from the Lidar directly, run ```rplidar_to_bhm_l
 - TensorFlow: `https://qengineering.eu/install-tensorflow-1.15.2-on-raspberry-pi-4.html`
 - PyTorch: `https://gist.github.com/akaanirban/621e63237e63bb169126b537d7a1d979`
 
-## Available Scripts
+## Run
 
 In the project directory, you can run:
 
-### `rplidar_to_bhm_convert_online.py`
+### `rplidar_to_bhm_live_fromlidar2.py` 
 
 
