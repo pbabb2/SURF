@@ -195,7 +195,7 @@ def main():
     plot_minmax = (-2,2)
 
     # plot
-    fig = plt.figure(figsize=(5, 2.5))
+    fig = plt.figure(figsize=(10, 5))
     ax1 = plt.subplot(121)
     ax1.set_xlim(plot_minmax); ax1.set_ylim(plot_minmax)
     ax2 = plt.subplot(122)
