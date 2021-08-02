@@ -40,7 +40,7 @@ def read_lidar(num_of_scans_to_stack, itera=0):
     change_point = diff > 350  # change point if diff greater than 350
     change_point_loc = np.where(change_point == True)[0]
     change_point_loc = np.insert(change_point_loc, 0, [0, ])
-    # print("change_point_loc: ", change_point_loc)
+    print("change_point_loc: ", change_point_loc)
 
     # for each lidar circle
     for i in range(len(change_point_loc) - 1):
