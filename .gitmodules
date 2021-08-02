@@ -1,3 +1,0 @@
-[submodule "edge-tpu-tiny-yolo"]
-	path = edge-tpu-tiny-yolo
-	url = ./
