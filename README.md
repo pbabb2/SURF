@@ -35,4 +35,8 @@ In the project directory, you can run:
 
 ### `rplidar_to_bhm_live_fromlidar2.py` 
 
+To run the Edge TPU computer vision code go to the edge-tpu-tiny-yolo_ directory and run:
+
+### `inference.py --model quant_coco-tiny-v3-relu_edgetpu.tflite --anchors tiny_yolo_anchors.txt --classes coco.names --cam -t 0.1 --edge_tpu --quant`
+
 
