@@ -1,0 +1,12 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+  then
+    echo "ERROR! Usage: help/video filepath"
+    exit
+fi
+
+./home/pi/edge-tpu-tiny-yolo
+avconv -i pictures_%08d.jpg Mykelbday.mp4
+avconv -i video.mp4 -i $1 output.mp4
+
+rm pictures_*.jpg video.mp4
